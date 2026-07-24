@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, Component } from 'react';
 import { StoreProvider, useStore } from './context/StoreContext';
 import { Navbar } from './components/Navbar';
 import { BuyerDashboard } from './components/BuyerDashboard';
@@ -10,8 +10,52 @@ import { ProductDetailModal } from './components/ProductDetailModal';
 import { OrderTrackingModal } from './components/OrderTrackingModal';
 import { Shield, Store, UserCheck, Info } from 'lucide-react';
 
+class ErrorBoundary extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error('Showemyanmar ErrorBoundary caught an error:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ padding: '40px 20px', textAlign: 'center', background: '#ffffff', minHeight: '100vh', color: '#0f172a', fontFamily: 'sans-serif' }}>
+          <h2 style={{ fontSize: '1.8rem', color: '#10b981', marginBottom: '12px' }}>Showemyanmar.shop</h2>
+          <p style={{ color: '#64748b', marginBottom: '20px' }}>An error occurred while rendering the page. Click below to refresh.</p>
+          <button
+            onClick={() => {
+              localStorage.clear();
+              window.location.reload();
+            }}
+            style={{
+              padding: '10px 20px',
+              background: '#10b981',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '8px',
+              fontWeight: 'bold',
+              cursor: 'pointer'
+            }}
+          >
+            Reset App State & Refresh
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 function MainApp() {
-  const { currentUser } = useStore();
+  const { currentUser, isSupabaseConfigured } = useStore();
   const [activeTab, setActiveTab] = useState('marketplace'); // 'marketplace', 'seller-dashboard', 'admin-dashboard'
   
   // Modals state
@@ -40,7 +84,7 @@ function MainApp() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Info size={14} color="#6ee7b7" />
           <span>
-            <strong>Showemyanmar.shop Demo:</strong> Sign in with test accounts or switch views to explore.
+            <strong>Showemyanmar.shop Demo:</strong> {isSupabaseConfigured ? '🟢 Live Supabase Database Connected' : '⚡ Local Demo Mode Active'}
           </span>
         </div>
 
@@ -122,8 +166,10 @@ function MainApp() {
 
 export default function App() {
   return (
-    <StoreProvider>
-      <MainApp />
-    </StoreProvider>
+    <ErrorBoundary>
+      <StoreProvider>
+        <MainApp />
+      </StoreProvider>
+    </ErrorBoundary>
   );
 }

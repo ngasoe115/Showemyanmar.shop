@@ -1,21 +1,29 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+const supabaseUrl = (import.meta.env.VITE_SUPABASE_URL || '').trim();
+const supabaseAnonKey = (import.meta.env.VITE_SUPABASE_ANON_KEY || '').trim();
 
 export const isSupabaseConfigured = Boolean(
   supabaseUrl && 
   supabaseAnonKey && 
-  supabaseUrl !== 'YOUR_SUPABASE_URL' &&
+  supabaseUrl.startsWith('http') &&
   !supabaseUrl.includes('placeholder')
 );
 
-if (!isSupabaseConfigured) {
-  console.info(
-    'ℹ️ Supabase credentials not set in .env (VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY). Running in local persistent state mode.'
-  );
+let client = null;
+
+if (isSupabaseConfigured) {
+  try {
+    client = createClient(supabaseUrl, supabaseAnonKey, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true
+      }
+    });
+  } catch (err) {
+    console.warn('⚠️ Supabase client initialization warning:', err);
+    client = null;
+  }
 }
 
-export const supabase = isSupabaseConfigured
-  ? createClient(supabaseUrl, supabaseAnonKey)
-  : null;
+export const supabase = client;
