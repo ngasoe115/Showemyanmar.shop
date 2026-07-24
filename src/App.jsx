@@ -1,4 +1,4 @@
-import React, { useState, Component } from 'react';
+import React, { useState, Component, useEffect } from 'react';
 import { StoreProvider, useStore } from './context/StoreContext';
 import { Navbar } from './components/Navbar';
 import { BuyerDashboard } from './components/BuyerDashboard';
@@ -58,15 +58,24 @@ function MainApp() {
   const { currentUser, isSupabaseConfigured } = useStore();
   const [activeTab, setActiveTab] = useState('marketplace'); // 'marketplace', 'seller-dashboard', 'admin-dashboard'
   
-  // Modals state
+  // Default isAuthOpen to true if user is not signed in
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedOrderForTracking, setSelectedOrderForTracking] = useState(null);
 
+  // Pop open Sign-In modal by default on first visit if not logged in
+  useEffect(() => {
+    const hasVisited = sessionStorage.getItem('showe_has_visited');
+    if (!currentUser && !hasVisited) {
+      setIsAuthOpen(true);
+      sessionStorage.setItem('showe_has_visited', 'true');
+    }
+  }, [currentUser]);
+
   return (
     <div className="app-container">
-      {/* Top Demo Helper Bar */}
+      {/* Top Helper Bar */}
       <div
         style={{
           background: 'linear-gradient(90deg, #064e3b 0%, #047857 100%)',
@@ -114,7 +123,7 @@ function MainApp() {
               cursor: 'pointer'
             }}
           >
-            Switch Account
+            Sign In / Switch Account
           </button>
         </div>
       </div>

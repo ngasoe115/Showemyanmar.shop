@@ -1,9 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { useStore } from '../context/StoreContext';
 import { X, UserCheck, Shield, Store, MapPin, Mail, Lock, Sparkles, KeyRound, AlertCircle, CheckCircle } from 'lucide-react';
 
 export const AuthModal = ({ isOpen, onClose }) => {
-  const { login, signup, pendingOtp, verifyOtpCode, cancelOtpSession, isSupabaseConfigured } = useStore();
+  const { login, signup, pendingOtp, verifyOtpCode, cancelOtpSession } = useStore();
   const [isSignup, setIsSignup] = useState(false);
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
@@ -72,10 +72,8 @@ export const AuthModal = ({ isOpen, onClose }) => {
     }
   };
 
-  // Handle 6-digit OTP input change
   const handleDigitChange = (index, value) => {
     if (value.length > 1) {
-      // Handle paste of full 6 digit code
       const pasted = value.trim().slice(0, 6).split('');
       const newDigits = [...otpDigits];
       pasted.forEach((char, i) => {
@@ -92,7 +90,6 @@ export const AuthModal = ({ isOpen, onClose }) => {
     newDigits[index] = value;
     setOtpDigits(newDigits);
 
-    // Auto advance focus to next input
     if (value && index < 5) {
       inputRefs[index + 1].current?.focus();
     }
@@ -117,7 +114,7 @@ export const AuthModal = ({ isOpen, onClose }) => {
     if (res.success) {
       onClose();
     } else {
-      setError(res.message || 'Invalid code.');
+      setError(res.message || 'Invalid code. Please check your email inbox.');
     }
   };
 
@@ -131,10 +128,10 @@ export const AuthModal = ({ isOpen, onClose }) => {
               {pendingOtp
                 ? pendingOtp.type === 'signup'
                   ? 'Verify Email Address'
-                  : 'New Browser Security Check'
+                  : 'Security Code Verification'
                 : isSignup
                 ? 'Create Account'
-                : 'Welcome Back'}
+                : 'Sign In'}
             </h3>
           </div>
           <button
@@ -148,7 +145,6 @@ export const AuthModal = ({ isOpen, onClose }) => {
           </button>
         </div>
 
-        {/* Auth Error Banner */}
         {error && (
           <div style={{ padding: '10px 14px', background: 'var(--danger-bg)', color: 'var(--danger)', borderRadius: 'var(--radius-md)', fontSize: '0.85rem', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <AlertCircle size={16} />
@@ -156,7 +152,6 @@ export const AuthModal = ({ isOpen, onClose }) => {
           </div>
         )}
 
-        {/* Success Banner */}
         {successMsg && (
           <div style={{ padding: '10px 14px', background: 'rgba(16, 185, 129, 0.12)', color: '#10b981', border: '1px solid rgba(16, 185, 129, 0.3)', borderRadius: 'var(--radius-md)', fontSize: '0.85rem', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <CheckCircle size={16} />
@@ -164,7 +159,7 @@ export const AuthModal = ({ isOpen, onClose }) => {
           </div>
         )}
 
-        {/* 6-DIGIT OTP VERIFICATION SCREEN */}
+        {/* 6-DIGIT OTP VERIFICATION SCREEN (NO DEMO CODE DISPLAY) */}
         {pendingOtp ? (
           <form onSubmit={handleVerifyOtpSubmit}>
             <div style={{ textAlign: 'center', marginBottom: '20px' }}>
@@ -187,26 +182,8 @@ export const AuthModal = ({ isOpen, onClose }) => {
                 Enter 6-Digit Verification Code
               </h4>
               <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginTop: '6px' }}>
-                We sent a security code to <strong>{pendingOtp.email}</strong>.
+                A 6-digit security code has been sent to <strong>{pendingOtp.email}</strong>. Please check your email inbox and spam folder.
               </p>
-
-              {/* DEMO HELPER NOTICE */}
-              {pendingOtp.demoCode && (
-                <div
-                  style={{
-                    marginTop: '12px',
-                    padding: '8px 12px',
-                    background: 'rgba(99, 102, 241, 0.1)',
-                    border: '1px solid rgba(99, 102, 241, 0.25)',
-                    borderRadius: 'var(--radius-md)',
-                    fontSize: '0.8rem',
-                    color: 'var(--primary-dark)',
-                    fontWeight: 700
-                  }}
-                >
-                  🔑 Demo Code: <span style={{ fontSize: '1rem', letterSpacing: '2px', color: '#10b981' }}>{pendingOtp.demoCode}</span> (or enter <span style={{ color: '#10b981' }}>123456</span>)
-                </div>
-              )}
             </div>
 
             {/* 6 PIN DIGIT INPUTS */}
@@ -249,7 +226,7 @@ export const AuthModal = ({ isOpen, onClose }) => {
                 }}
                 style={{ background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: '0.825rem', cursor: 'pointer' }}
               >
-                ← Back to Login
+                ← Back to Sign In
               </button>
             </div>
           </form>
@@ -287,7 +264,7 @@ export const AuthModal = ({ isOpen, onClose }) => {
             {/* QUICK TEST ACCOUNTS SELECTOR */}
             <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid var(--border-color)' }}>
               <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '10px' }}>
-                ⚡ INSTANT DEMO ACCOUNTS (1-CLICK LOG IN):
+                ⚡ QUICK DEMO ACCOUNTS:
               </div>
               <div className="demo-accounts-grid">
                 <button
