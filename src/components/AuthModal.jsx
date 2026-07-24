@@ -20,9 +20,12 @@ export const AuthModal = ({ isOpen, onClose }) => {
   const [storeName, setStoreName] = useState('');
   const [city, setCity] = useState('Yangon');
 
-  // 6-digit OTP Pin state
-  const [otpDigits, setOtpDigits] = useState(['', '', '', '', '', '']);
-  const inputRefs = [useRef(), useRef(), useRef(), useRef(), useRef(), useRef()];
+  // 8-digit OTP Pin state (Supports 6 to 8 digit verification codes)
+  const [otpDigits, setOtpDigits] = useState(['', '', '', '', '', '', '', '']);
+  const inputRefs = [
+    useRef(), useRef(), useRef(), useRef(),
+    useRef(), useRef(), useRef(), useRef()
+  ];
 
   if (!isOpen) return null;
 
@@ -33,7 +36,7 @@ export const AuthModal = ({ isOpen, onClose }) => {
     const res = await login(loginEmail, loginPassword);
     if (res.success) {
       if (res.requiresOtp) {
-        setSuccessMsg(res.message || 'Unrecognized browser. 6-digit code required.');
+        setSuccessMsg(res.message || 'Security code required.');
       } else {
         onClose();
       }
@@ -54,7 +57,7 @@ export const AuthModal = ({ isOpen, onClose }) => {
     const res = await signup({ name, email, password, role, storeName, city });
     if (res.success) {
       if (res.requiresOtp) {
-        setSuccessMsg('Account created! Please enter the 6-digit verification code sent to your email.');
+        setSuccessMsg('Account created! Please enter the verification code sent to your email.');
       } else {
         onClose();
       }
@@ -73,24 +76,26 @@ export const AuthModal = ({ isOpen, onClose }) => {
   };
 
   const handleDigitChange = (index, value) => {
-    if (value.length > 1) {
-      const pasted = value.trim().slice(0, 6).split('');
+    const cleanValue = value.trim();
+
+    if (cleanValue.length > 1) {
+      // Handle paste of full code (6 to 8 characters)
+      const pasted = cleanValue.slice(0, 8).split('');
       const newDigits = [...otpDigits];
       pasted.forEach((char, i) => {
-        if (i < 6) newDigits[i] = char;
+        if (i < 8) newDigits[i] = char;
       });
       setOtpDigits(newDigits);
-      if (pasted.length === 6) {
-        inputRefs[5].current?.focus();
-      }
+      const nextFocus = Math.min(7, pasted.length - 1);
+      inputRefs[nextFocus].current?.focus();
       return;
     }
 
     const newDigits = [...otpDigits];
-    newDigits[index] = value;
+    newDigits[index] = cleanValue;
     setOtpDigits(newDigits);
 
-    if (value && index < 5) {
+    if (cleanValue && index < 7) {
       inputRefs[index + 1].current?.focus();
     }
   };
@@ -104,9 +109,9 @@ export const AuthModal = ({ isOpen, onClose }) => {
   const handleVerifyOtpSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    const fullCode = otpDigits.join('');
+    const fullCode = otpDigits.join('').trim();
     if (fullCode.length < 6) {
-      setError('Please enter all 6 digits of the verification code.');
+      setError('Please enter your verification code.');
       return;
     }
 
@@ -120,7 +125,7 @@ export const AuthModal = ({ isOpen, onClose }) => {
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '480px' }}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '520px' }}>
         <div className="modal-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Sparkles size={20} color="var(--primary)" />
@@ -159,7 +164,7 @@ export const AuthModal = ({ isOpen, onClose }) => {
           </div>
         )}
 
-        {/* 6-DIGIT OTP VERIFICATION SCREEN (NO DEMO CODE DISPLAY) */}
+        {/* 8-DIGIT OTP VERIFICATION SCREEN */}
         {pendingOtp ? (
           <form onSubmit={handleVerifyOtpSubmit}>
             <div style={{ textAlign: 'center', marginBottom: '20px' }}>
@@ -179,30 +184,30 @@ export const AuthModal = ({ isOpen, onClose }) => {
                 <KeyRound size={26} />
               </div>
               <h4 style={{ color: 'var(--text-main)', fontSize: '1.1rem', fontWeight: 800 }}>
-                Enter 6-Digit Verification Code
+                Enter Verification Code
               </h4>
               <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginTop: '6px' }}>
-                A 6-digit security code has been sent to <strong>{pendingOtp.email}</strong>. Please check your email inbox and spam folder.
+                A verification security code has been sent to <strong>{pendingOtp.email}</strong>. Enter the code below to complete sign-up.
               </p>
             </div>
 
-            {/* 6 PIN DIGIT INPUTS */}
-            <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', marginBottom: '24px' }}>
+            {/* 8 PIN DIGIT INPUTS */}
+            <div style={{ display: 'flex', gap: '6px', justifyContent: 'center', marginBottom: '24px' }}>
               {otpDigits.map((digit, idx) => (
                 <input
                   key={idx}
                   ref={inputRefs[idx]}
                   type="text"
                   inputMode="numeric"
-                  maxLength={6}
+                  maxLength={8}
                   value={digit}
                   onChange={(e) => handleDigitChange(idx, e.target.value)}
                   onKeyDown={(e) => handleKeyDown(idx, e)}
                   style={{
-                    width: '48px',
-                    height: '54px',
+                    width: '42px',
+                    height: '50px',
                     textAlign: 'center',
-                    fontSize: '1.4rem',
+                    fontSize: '1.25rem',
                     fontWeight: 800,
                     borderRadius: 'var(--radius-md)',
                     border: '2px solid var(--border-color)',
@@ -215,7 +220,7 @@ export const AuthModal = ({ isOpen, onClose }) => {
             </div>
 
             <button type="submit" className="btn btn-primary" style={{ width: '100%', marginBottom: '14px' }}>
-              Verify & Complete Sign-In
+              Verify & Complete Sign-Up
             </button>
 
             <div style={{ textAlign: 'center' }}>
@@ -261,7 +266,6 @@ export const AuthModal = ({ isOpen, onClose }) => {
               Sign In
             </button>
 
-            {/* QUICK TEST ACCOUNTS SELECTOR */}
             <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid var(--border-color)' }}>
               <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '10px' }}>
                 ⚡ QUICK DEMO ACCOUNTS:
