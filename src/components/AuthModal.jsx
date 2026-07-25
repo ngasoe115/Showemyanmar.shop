@@ -216,33 +216,18 @@ export const AuthModal = ({ isOpen, onClose, onOpenInbox }) => {
                 justifyContent: 'space-between',
                 fontSize: '0.85rem'
               }}>
-                <span style={{ color: 'var(--text-muted)' }}>
-                  Code: <strong style={{ color: 'var(--primary)', fontFamily: 'monospace', fontSize: '1rem' }}>{pendingOtp.demoCode}</strong>
-                </span>
-                <div style={{ display: 'flex', gap: '6px' }}>
-                  {onOpenInbox && (
-                    <button
-                      type="button"
-                      onClick={onOpenInbox}
-                      className="btn btn-secondary btn-sm"
-                      style={{ fontSize: '0.75rem', padding: '4px 10px' }}
-                    >
-                      📫 Open Inbox
-                    </button>
-                  )}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const digits = pendingOtp.demoCode.split('');
-                      setOtpDigits(digits);
-                      inputRefs[Math.min(5, digits.length - 1)].current?.focus();
-                    }}
-                    className="btn btn-primary btn-sm"
-                    style={{ fontSize: '0.75rem', padding: '4px 10px' }}
-                  >
-                    ⚡ Auto-fill Code
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const digits = pendingOtp.demoCode.split('');
+                    setOtpDigits(digits);
+                    inputRefs[Math.min(5, digits.length - 1)].current?.focus();
+                  }}
+                  className="btn btn-primary btn-sm"
+                  style={{ fontSize: '0.75rem', padding: '4px 10px' }}
+                >
+                  ⚡ Auto-fill Code
+                </button>
               </div>
             )}
 
