@@ -25,13 +25,28 @@ localSmtpServer.listen(SMTP_PORT, () => {
   console.log(`✉️ Local SMTP Server listening on port ${SMTP_PORT} (Sender: ${SITE_EMAIL})`);
 });
 
-// Configure Nodemailer Transporter
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || '127.0.0.1',
-  port: parseInt(process.env.SMTP_PORT || SMTP_PORT, 10),
-  secure: process.env.SMTP_SECURE === 'true',
-  ignoreTLS: true
-});
+// Configure Nodemailer Transporter (Supports Real SMTP Relays e.g. Gmail / SendGrid / Resend)
+const isExternalSmtp = Boolean(process.env.SMTP_HOST && process.env.SMTP_USER);
+
+const transporter = isExternalSmtp
+  ? nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: parseInt(process.env.SMTP_PORT || '587', 10),
+      secure: process.env.SMTP_SECURE === 'true',
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS
+      }
+    })
+  : nodemailer.createTransport({
+      host: '127.0.0.1',
+      port: parseInt(SMTP_PORT, 10),
+      ignoreTLS: true
+    });
+
+if (isExternalSmtp) {
+  console.log(`🌐 Real External SMTP Mailer Configured via ${process.env.SMTP_HOST}:${process.env.SMTP_PORT || 587}`);
+}
 
 /**
  * Sends Verification Email using Site's local SMTP/Email address
