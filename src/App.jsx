@@ -8,6 +8,7 @@ import { AuthModal } from './components/AuthModal';
 import { CartDrawer } from './components/CartDrawer';
 import { ProductDetailModal } from './components/ProductDetailModal';
 import { OrderTrackingModal } from './components/OrderTrackingModal';
+import { LocalMailInboxModal } from './components/LocalMailInboxModal';
 import { Shield, Store, UserCheck, Info } from 'lucide-react';
 
 class ErrorBoundary extends Component {
@@ -61,6 +62,7 @@ function MainApp() {
   // Default isAuthOpen to true if user is not signed in
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isInboxOpen, setIsInboxOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedOrderForTracking, setSelectedOrderForTracking] = useState(null);
 
@@ -93,7 +95,7 @@ function MainApp() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Info size={14} color="#6ee7b7" />
           <span>
-            <strong>Showemyanmar.shop Demo:</strong> {isSupabaseConfigured ? '🟢 Live Supabase Database Connected' : '⚡ Local Demo Mode Active'}
+            <strong>Showemyanmar.shop Demo:</strong> {isSupabaseConfigured ? '🟢 Live Supabase Database Connected' : '⚡ Local Self-Hosted Backend Active'}
           </span>
         </div>
 
@@ -132,6 +134,7 @@ function MainApp() {
       <Navbar
         onOpenAuth={() => setIsAuthOpen(true)}
         onOpenCart={() => setIsCartOpen(true)}
+        onOpenInbox={() => setIsInboxOpen(true)}
         activeTab={activeTab}
         setActiveTab={setActiveTab}
       />
@@ -152,7 +155,16 @@ function MainApp() {
       </main>
 
       {/* Overlays & Modals */}
-      <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
+      <AuthModal
+        isOpen={isAuthOpen}
+        onClose={() => setIsAuthOpen(false)}
+        onOpenInbox={() => setIsInboxOpen(true)}
+      />
+
+      <LocalMailInboxModal
+        isOpen={isInboxOpen}
+        onClose={() => setIsInboxOpen(false)}
+      />
 
       <CartDrawer
         isOpen={isCartOpen}

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useStore } from '../context/StoreContext';
 import { ShoppingBag, ShoppingCart, User, Shield, Store, MapPin, LogOut, RotateCcw, Plus } from 'lucide-react';
 
-export const Navbar = ({ onOpenAuth, onOpenCart, activeTab, setActiveTab }) => {
+export const Navbar = ({ onOpenAuth, onOpenCart, onOpenInbox, activeTab, setActiveTab }) => {
   const { currentUser, logout, cart, resetDemoData } = useStore();
   const [showUserMenu, setShowUserMenu] = useState(false);
 
@@ -51,6 +51,18 @@ export const Navbar = ({ onOpenAuth, onOpenCart, activeTab, setActiveTab }) => {
 
         {/* Right Section: Cart, User Profile / Login */}
         <div className="nav-actions">
+          {/* Local Inbox Button */}
+          {onOpenInbox && (
+            <button
+              onClick={onOpenInbox}
+              className="btn btn-sm btn-secondary"
+              title="View sent emails from noreply@showemyanmar.shop"
+              style={{ borderColor: 'rgba(56, 189, 248, 0.4)', color: '#38bdf8' }}
+            >
+              📫 Site Inbox
+            </button>
+          )}
+
           {/* Reset Demo Data Button */}
           <button
             onClick={() => {

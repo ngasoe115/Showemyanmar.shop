@@ -15,5 +15,21 @@
       "joinedDate": "2026-07-25",
       "trustedDevices": []
     }
+  },
+  "kog695013@gmail.com": {
+    "type": "signup",
+    "code": "823382",
+    "expiresAt": 1784975568016,
+    "userData": {
+      "id": "user-1784974968016",
+      "name": "anwar",
+      "email": "kog695013@gmail.com",
+      "passwordHash": "$2a$10$sZjoEh4JeGrrF6f3LaMDU.T7RggQXWOkj32TVNVLEvuTZq79c/pui",
+      "role": "buyer",
+      "city": "Yangon",
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=anwar",
+      "joinedDate": "2026-07-25",
+      "trustedDevices": []
+    }
   }
 }
