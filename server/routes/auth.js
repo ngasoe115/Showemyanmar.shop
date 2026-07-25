@@ -7,8 +7,8 @@ import { sendOtpEmail } from '../mailer.js';
 
 const router = express.Router();
 
-// Helper to generate 6-digit or 8-digit OTP
-const generateOtp = (length = 8) => {
+// Helper to generate 6-digit OTP
+const generateOtp = (length = 6) => {
   let result = '';
   for (let i = 0; i < length; i++) {
     result += Math.floor(Math.random() * 10).toString();
@@ -31,7 +31,7 @@ router.post('/signup', async (req, res) => {
     }
 
     const passwordHash = await bcrypt.hash(password, 10);
-    const otpCode = generateOtp(8);
+    const otpCode = generateOtp(6);
 
     const otps = db.getOtps();
     otps[email.toLowerCase()] = {
@@ -61,7 +61,7 @@ router.post('/signup', async (req, res) => {
       requiresOtp: true,
       email: email.toLowerCase(),
       demoCode: otpCode,
-      message: 'Account created! Please enter the 8-digit verification code sent to your email.'
+      message: 'Account created! Please enter the 6-digit verification code sent to your email.'
     });
   } catch (err) {
     console.error('Signup error:', err);
@@ -100,7 +100,7 @@ router.post('/login', async (req, res) => {
     const isTrusted = userTrustedDevices.includes(email.toLowerCase());
 
     if (!isTrusted) {
-      const otpCode = generateOtp(8);
+      const otpCode = generateOtp(6);
       const otps = db.getOtps();
       otps[email.toLowerCase()] = {
         type: 'login',

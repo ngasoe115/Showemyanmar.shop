@@ -53,7 +53,7 @@ export const sendOtpEmail = async (recipientEmail, code, type = 'signup') => {
         <h2 style="margin-top: 0; color: #ffffff; font-size: 18px;">${isSignup ? 'Complete Your Registration' : 'Device Security Verification'}</h2>
         <p style="color: #cbd5e1; font-size: 14px; line-height: 1.6;">
           ${isSignup ? 'Thank you for creating an account on Showemyanmar.shop.' : 'A login attempt was detected from a new browser.'}
-          Please enter the following 8-digit verification code to proceed:
+          Please enter the following 6-digit verification code to proceed:
         </p>
 
         <div style="text-align: center; margin: 28px 0;">

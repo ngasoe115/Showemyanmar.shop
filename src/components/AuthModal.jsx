@@ -20,11 +20,10 @@ export const AuthModal = ({ isOpen, onClose }) => {
   const [storeName, setStoreName] = useState('');
   const [city, setCity] = useState('Yangon');
 
-  // 8-digit OTP Pin state (Supports 6 to 8 digit verification codes)
-  const [otpDigits, setOtpDigits] = useState(['', '', '', '', '', '', '', '']);
+  // 6-digit OTP Pin state
+  const [otpDigits, setOtpDigits] = useState(['', '', '', '', '', '']);
   const inputRefs = [
-    useRef(), useRef(), useRef(), useRef(),
-    useRef(), useRef(), useRef(), useRef()
+    useRef(), useRef(), useRef(), useRef(), useRef(), useRef()
   ];
 
   if (!isOpen) return null;
@@ -79,14 +78,14 @@ export const AuthModal = ({ isOpen, onClose }) => {
     const cleanValue = value.trim();
 
     if (cleanValue.length > 1) {
-      // Handle paste of full code (6 to 8 characters)
-      const pasted = cleanValue.slice(0, 8).split('');
+      // Handle paste of 6-digit code
+      const pasted = cleanValue.slice(0, 6).split('');
       const newDigits = [...otpDigits];
       pasted.forEach((char, i) => {
-        if (i < 8) newDigits[i] = char;
+        if (i < 6) newDigits[i] = char;
       });
       setOtpDigits(newDigits);
-      const nextFocus = Math.min(7, pasted.length - 1);
+      const nextFocus = Math.min(5, pasted.length - 1);
       inputRefs[nextFocus].current?.focus();
       return;
     }
@@ -95,7 +94,7 @@ export const AuthModal = ({ isOpen, onClose }) => {
     newDigits[index] = cleanValue;
     setOtpDigits(newDigits);
 
-    if (cleanValue && index < 7) {
+    if (cleanValue && index < 5) {
       inputRefs[index + 1].current?.focus();
     }
   };
@@ -225,7 +224,7 @@ export const AuthModal = ({ isOpen, onClose }) => {
                   onClick={() => {
                     const digits = pendingOtp.demoCode.split('');
                     setOtpDigits(digits);
-                    inputRefs[Math.min(7, digits.length - 1)].current?.focus();
+                    inputRefs[Math.min(5, digits.length - 1)].current?.focus();
                   }}
                   className="btn btn-secondary btn-sm"
                   style={{ fontSize: '0.75rem', padding: '4px 10px' }}
@@ -235,15 +234,15 @@ export const AuthModal = ({ isOpen, onClose }) => {
               </div>
             )}
 
-            {/* 8 PIN DIGIT INPUTS */}
-            <div style={{ display: 'flex', gap: '6px', justifyContent: 'center', marginBottom: '24px' }}>
+            {/* 6 PIN DIGIT INPUTS */}
+            <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', marginBottom: '24px' }}>
               {otpDigits.map((digit, idx) => (
                 <input
                   key={idx}
                   ref={inputRefs[idx]}
                   type="text"
                   inputMode="numeric"
-                  maxLength={8}
+                  maxLength={6}
                   value={digit}
                   onChange={(e) => handleDigitChange(idx, e.target.value)}
                   onKeyDown={(e) => handleKeyDown(idx, e)}

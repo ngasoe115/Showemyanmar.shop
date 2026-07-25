@@ -64,5 +64,18 @@
     "trustedDevices": [
       "testuser@showemyanmar.shop"
     ]
+  },
+  {
+    "id": "user-1784974834917",
+    "name": "Six Digit User",
+    "email": "sixdigit@showemyanmar.shop",
+    "passwordHash": "$2a$10$X8qkfcV3eG.C.fGPcNnm1eZ35Of4B7RWa6UNEOaZvCcvAmhouoKDy",
+    "role": "buyer",
+    "city": "Yangon",
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Six%20Digit%20User",
+    "joinedDate": "2026-07-25",
+    "trustedDevices": [
+      "sixdigit@showemyanmar.shop"
+    ]
   }
 ]
