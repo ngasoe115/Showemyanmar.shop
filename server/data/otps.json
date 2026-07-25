@@ -1,0 +1,19 @@
+{
+  "aung@showemyanmar.shop": {
+    "type": "signup",
+    "code": "93919568",
+    "expiresAt": 1784975352784,
+    "userData": {
+      "id": "user-1784974752784",
+      "name": "Aung San",
+      "email": "aung@showemyanmar.shop",
+      "passwordHash": "$2a$10$dZZiUE3Anc/SIn5j7trCg.YBeIIEvZTjOm8luhsrvO9RkNzVdSIy.",
+      "role": "seller",
+      "storeName": "Yangon Tech",
+      "city": "Yangon",
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Aung%20San",
+      "joinedDate": "2026-07-25",
+      "trustedDevices": []
+    }
+  }
+}

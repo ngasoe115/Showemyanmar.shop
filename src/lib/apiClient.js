@@ -60,6 +60,64 @@ export const apiClient = {
     }
   },
 
+  async createProduct(productData, token) {
+    try {
+      const headers = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+      const res = await fetch(`${API_BASE}/products`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(productData)
+      });
+      return await res.json();
+    } catch (e) {
+      return { success: false, message: 'Failed to create product on backend.' };
+    }
+  },
+
+  async updateProduct(productId, updates, token) {
+    try {
+      const headers = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+      const res = await fetch(`${API_BASE}/products/${productId}`, {
+        method: 'PUT',
+        headers,
+        body: JSON.stringify(updates)
+      });
+      return await res.json();
+    } catch (e) {
+      return { success: false, message: 'Failed to update product on backend.' };
+    }
+  },
+
+  async toggleSoldOut(productId, token) {
+    try {
+      const headers = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+      const res = await fetch(`${API_BASE}/products/${productId}/toggle-sold-out`, {
+        method: 'PUT',
+        headers
+      });
+      return await res.json();
+    } catch (e) {
+      return { success: false, message: 'Failed to toggle sold out status.' };
+    }
+  },
+
+  async deleteProduct(productId, token) {
+    try {
+      const headers = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+      const res = await fetch(`${API_BASE}/products/${productId}`, {
+        method: 'DELETE',
+        headers
+      });
+      return await res.json();
+    } catch (e) {
+      return { success: false, message: 'Failed to delete product on backend.' };
+    }
+  },
+
   async getOrders() {
     try {
       const res = await fetch(`${API_BASE}/orders`, {
@@ -70,5 +128,21 @@ export const apiClient = {
     } catch (e) {
       return null;
     }
+  },
+
+  async createOrder(orderData, token) {
+    try {
+      const headers = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+      const res = await fetch(`${API_BASE}/orders`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(orderData)
+      });
+      return await res.json();
+    } catch (e) {
+      return { success: false, message: 'Failed to create order on backend.' };
+    }
   }
 };
+

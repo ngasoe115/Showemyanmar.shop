@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { INITIAL_USERS, INITIAL_PRODUCTS, INITIAL_ORDERS } from '../data/initialData';
 import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
+import { apiClient } from '../lib/apiClient';
 
 const StoreContext = createContext();
 
@@ -196,6 +197,29 @@ export const StoreProvider = ({ children }) => {
   const login = async (email, password) => {
     const isTrusted = isDeviceTrusted(email);
 
+    // Try Self-Hosted Express API First
+    try {
+      const apiRes = await apiClient.login(email, password);
+      if (apiRes && apiRes.success) {
+        if (apiRes.requiresOtp) {
+          setPendingOtp({
+            email: apiRes.email,
+            type: 'device',
+            demoCode: apiRes.demoCode,
+            isSelfHosted: true
+          });
+          return { success: true, requiresOtp: true, demoCode: apiRes.demoCode, message: apiRes.message };
+        }
+        setCurrentUser(apiRes.user);
+        trustCurrentDevice(email);
+        return { success: true, requiresOtp: false, user: apiRes.user };
+      } else if (apiRes && apiRes.message && apiRes.message !== 'Backend server connection error.') {
+        return { success: false, message: apiRes.message };
+      }
+    } catch (e) {
+      // Fall through if backend unreachable
+    }
+
     if (isSupabaseConfigured && supabase) {
       try {
         const { data, error } = await supabase.auth.signInWithPassword({ email, password });
@@ -222,7 +246,7 @@ export const StoreProvider = ({ children }) => {
             demoCode,
             supabaseUser: data.user
           });
-          return { success: true, requiresOtp: true, message: 'Unrecognized device. Enter the 6-digit verification code sent to your email.' };
+          return { success: true, requiresOtp: true, message: 'Unrecognized device. Enter the 8-digit verification code sent to your email.' };
         }
 
         const { data: profile } = await supabase.from('profiles').select('*').eq('id', data.user.id).single();
@@ -269,6 +293,25 @@ export const StoreProvider = ({ children }) => {
   };
 
   const signup = async (userData) => {
+    // Try Self-Hosted Express API First
+    try {
+      const apiRes = await apiClient.signup(userData);
+      if (apiRes && apiRes.success) {
+        setPendingOtp({
+          email: apiRes.email,
+          userData,
+          type: 'signup',
+          demoCode: apiRes.demoCode,
+          isSelfHosted: true
+        });
+        return { success: true, requiresOtp: true, demoCode: apiRes.demoCode, message: apiRes.message };
+      } else if (apiRes && apiRes.message && apiRes.message !== 'Backend server connection error.') {
+        return { success: false, message: apiRes.message };
+      }
+    } catch (e) {
+      // Fall through if backend unreachable
+    }
+
     const demoCode = Math.floor(100000 + Math.random() * 900000).toString();
 
     if (isSupabaseConfigured && supabase) {
@@ -324,6 +367,22 @@ export const StoreProvider = ({ children }) => {
     if (!pendingOtp) return { success: false, message: 'No verification session active.' };
 
     const enteredCode = code.trim();
+
+    // Try Self-Hosted Express API First if session is self-hosted
+    if (pendingOtp.isSelfHosted) {
+      try {
+        const apiRes = await apiClient.verifyOtp(pendingOtp.email, enteredCode);
+        if (apiRes && apiRes.success) {
+          setCurrentUser(apiRes.user);
+          trustCurrentDevice(pendingOtp.email);
+          setPendingOtp(null);
+          return { success: true, user: apiRes.user };
+        }
+        return { success: false, message: apiRes?.message || 'Invalid verification code.' };
+      } catch (e) {
+        return { success: false, message: 'Server connection error during verification.' };
+      }
+    }
 
     if (isSupabaseConfigured && supabase) {
       try {

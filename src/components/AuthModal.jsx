@@ -187,9 +187,53 @@ export const AuthModal = ({ isOpen, onClose }) => {
                 Enter Verification Code
               </h4>
               <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginTop: '6px' }}>
-                A verification security code has been sent to <strong>{pendingOtp.email}</strong>. Enter the code below to complete sign-up.
+                A verification security code has been sent to <strong>{pendingOtp.email}</strong>.
               </p>
+              
+              <div style={{
+                margin: '12px auto 0',
+                padding: '8px 14px',
+                background: 'rgba(56, 189, 248, 0.1)',
+                border: '1px solid rgba(56, 189, 248, 0.3)',
+                borderRadius: 'var(--radius-md)',
+                fontSize: '0.8rem',
+                color: '#38bdf8',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px'
+              }}>
+                <span>✉️ Sent by <strong>noreply@showemyanmar.shop</strong> (Local SMTP)</span>
+              </div>
             </div>
+
+            {pendingOtp.demoCode && (
+              <div style={{
+                marginBottom: '16px',
+                padding: '10px 14px',
+                background: 'var(--bg-tertiary)',
+                borderRadius: 'var(--radius-md)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                fontSize: '0.85rem'
+              }}>
+                <span style={{ color: 'var(--text-muted)' }}>
+                  Code: <strong style={{ color: 'var(--primary)', fontFamily: 'monospace', fontSize: '1rem' }}>{pendingOtp.demoCode}</strong>
+                </span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const digits = pendingOtp.demoCode.split('');
+                    setOtpDigits(digits);
+                    inputRefs[Math.min(7, digits.length - 1)].current?.focus();
+                  }}
+                  className="btn btn-secondary btn-sm"
+                  style={{ fontSize: '0.75rem', padding: '4px 10px' }}
+                >
+                  ⚡ Auto-fill Code
+                </button>
+              </div>
+            )}
 
             {/* 8 PIN DIGIT INPUTS */}
             <div style={{ display: 'flex', gap: '6px', justifyContent: 'center', marginBottom: '24px' }}>

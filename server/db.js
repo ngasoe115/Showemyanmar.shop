@@ -14,6 +14,7 @@ const USERS_FILE = path.join(DATA_DIR, 'users.json');
 const PRODUCTS_FILE = path.join(DATA_DIR, 'products.json');
 const ORDERS_FILE = path.join(DATA_DIR, 'orders.json');
 const OTP_FILE = path.join(DATA_DIR, 'otps.json');
+const EMAILS_FILE = path.join(DATA_DIR, 'emails.json');
 
 const readJSON = (filePath, defaultData) => {
   try {
@@ -193,5 +194,8 @@ export const db = {
   saveOrders: (orders) => writeJSON(ORDERS_FILE, orders),
 
   getOtps: () => readJSON(OTP_FILE, {}),
-  saveOtps: (otps) => writeJSON(OTP_FILE, otps)
+  saveOtps: (otps) => writeJSON(OTP_FILE, otps),
+
+  getEmails: () => readJSON(EMAILS_FILE, []),
+  saveEmails: (emails) => writeJSON(EMAILS_FILE, emails)
 };

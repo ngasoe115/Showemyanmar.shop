@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { db } from '../db.js';
 import { JWT_SECRET, requireAuth } from '../middleware/authMiddleware.js';
+import { sendOtpEmail } from '../mailer.js';
 
 const router = express.Router();
 
@@ -52,7 +53,8 @@ router.post('/signup', async (req, res) => {
     };
     db.saveOtps(otps);
 
-    console.log(`✉️ [Self-Hosted Nodemailer Demo] Verification email sent to ${email} with OTP: ${otpCode}`);
+    // Send email via site's local SMTP mailer
+    await sendOtpEmail(email.toLowerCase(), otpCode, 'signup');
 
     return res.json({
       success: true,
@@ -108,7 +110,8 @@ router.post('/login', async (req, res) => {
       };
       db.saveOtps(otps);
 
-      console.log(`✉️ [Self-Hosted Nodemailer 2FA] Security code sent to ${email}: ${otpCode}`);
+      // Send email via site's local SMTP mailer
+      await sendOtpEmail(email.toLowerCase(), otpCode, 'login');
 
       return res.json({
         success: true,
@@ -149,6 +152,12 @@ router.post('/login', async (req, res) => {
     console.error('Login error:', err);
     res.status(500).json({ success: false, message: 'Internal server error during login.' });
   }
+});
+
+// GET /api/v1/auth/inbox - Local Site Email Inbox Viewer
+router.get('/inbox', (req, res) => {
+  const emails = db.getEmails();
+  res.json({ success: true, count: emails.length, emails });
 });
 
 // POST /api/v1/auth/verify-otp
@@ -250,3 +259,4 @@ router.post('/logout', (req, res) => {
 });
 
 export default router;
+

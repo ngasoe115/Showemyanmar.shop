@@ -1,0 +1,68 @@
+[
+  {
+    "id": "user-admin",
+    "name": "Platform Admin",
+    "email": "admin@marketplace.com",
+    "passwordHash": "$2a$12$R.7VzI.v1t7gXhU5b4W9e.hK9eZ.8y7/v3xZ.v9Z7v8Z9v0Z1Z2Z3",
+    "role": "admin",
+    "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+    "trustedDevices": [
+      "admin@marketplace.com"
+    ]
+  },
+  {
+    "id": "user-seller-1",
+    "name": "Marcus Vance",
+    "storeName": "TechVault Electronics",
+    "email": "tech@marketplace.com",
+    "passwordHash": "$2a$12$R.7VzI.v1t7gXhU5b4W9e.hK9eZ.8y7/v3xZ.v9Z7v8Z9v0Z1Z2Z3",
+    "role": "seller",
+    "city": "New York",
+    "rating": 4.9,
+    "joinedDate": "2024-01-15",
+    "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
+    "trustedDevices": [
+      "tech@marketplace.com"
+    ]
+  },
+  {
+    "id": "user-seller-2",
+    "name": "Elena Rostova",
+    "storeName": "Urban Craft & Fashion",
+    "email": "urban@marketplace.com",
+    "passwordHash": "$2a$12$R.7VzI.v1t7gXhU5b4W9e.hK9eZ.8y7/v3xZ.v9Z7v8Z9v0Z1Z2Z3",
+    "role": "seller",
+    "city": "Chicago",
+    "rating": 4.8,
+    "joinedDate": "2024-03-10",
+    "avatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80",
+    "trustedDevices": [
+      "urban@marketplace.com"
+    ]
+  },
+  {
+    "id": "user-buyer-1",
+    "name": "Alex Johnson",
+    "email": "buyer@marketplace.com",
+    "passwordHash": "$2a$12$R.7VzI.v1t7gXhU5b4W9e.hK9eZ.8y7/v3xZ.v9Z7v8Z9v0Z1Z2Z3",
+    "role": "buyer",
+    "city": "Austin",
+    "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
+    "trustedDevices": [
+      "buyer@marketplace.com"
+    ]
+  },
+  {
+    "id": "user-1784974694651",
+    "name": "Test User",
+    "email": "testuser@showemyanmar.shop",
+    "passwordHash": "$2a$10$RvD8TXY4EaF96PkOioA.RudABSqew7AznvycZu9y9gTWggC/rCOAy",
+    "role": "buyer",
+    "city": "Yangon",
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Test%20User",
+    "joinedDate": "2026-07-25",
+    "trustedDevices": [
+      "testuser@showemyanmar.shop"
+    ]
+  }
+]
